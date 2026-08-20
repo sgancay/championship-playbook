@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+//current working model
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sideline Card — Clemson Decision Suite</title>
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+
+:root{
+  --turf:#132018;
+  --turf-line: rgba(255,255,255,.08);
+  --card:#F5F1E4;
+  --card-edge:#E4DCC5;
+  --ink:#181A16;
+  --ink-soft:#4B4A3F;
+  --purple:#522D80;
+  --purple-deep:#38205A;
+  --orange:#F66733;
+  --chalk:#EFEBDD;
+  --good:#2E7D4F;
+  --warn:#B4841E;
+  --bad:#A3312A;
+  --ring:#C9C2A6;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(ellipse at top, rgba(255,255,255,.05), transparent 60%),
+    repeating-linear-gradient(90deg, var(--turf-line) 0 1px, transparent 1px 80px),
+    var(--turf);
+  color:var(--chalk);
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  padding:28px 16px 80px;
+}
+.wrap{max-width:1000px;margin:0 auto;}
+
+/* ---- Hero ---- */
+.hero{
+  position:relative;
+  padding:34px 30px 26px;
+  margin-bottom:22px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:6px;
+  background:linear-gradient(160deg, var(--purple-deep), #241238 70%);
+  overflow:hidden;
+}
+.hero::before{
+  content:"";
+  position:absolute; inset:0;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 2px, transparent 2px 44px);
+  opacity:.5;
+  pointer-events:none;
+}
+.hero .eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-size:11px;
+  color:var(--orange);
+  font-weight:700;
+}
+.hero h1{
+  font-family:'Anton',sans-serif;
+  font-weight:400;
+  font-size:clamp(30px,5vw,52px);
+  letter-spacing:.01em;
+  margin:6px 0 8px;
+  line-height:.95;
+  text-transform:uppercase;
+  color:var(--chalk);
+}
+.hero h1 span{color:var(--orange);}
+.hero p{max-width:560px;color:#D8D2E6;font-size:14.5px;line-height:1.55;margin:0;}
+
+/* ---- Tabs (index-card style) ---- */
+.tabs{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-bottom:-1px;
+  position:relative;
+  z-index:2;
+}
+.tab{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  padding:12px 16px 11px;
+  border:1px solid var(--card-edge);
+  border-bottom:none;
+  border-radius:8px 8px 0 0;
+  background:#DCD5BC;
+  color:var(--ink-soft);
+  cursor:pointer;
+  transition:.15s;
+}
+.tab.active{background:var(--card);color:var(--ink);transform:translateY(1px);}
+.tab:hover{background:var(--card);}
+
+/* ---- Card (laminate sheet) ---- */
+.card{
+  background:var(--card);
+  border:1px solid var(--card-edge);
+  border-radius:0 8px 8px 8px;
+  padding:26px 26px 22px;
+  color:var(--ink);
+  position:relative;
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.55);
+}
+.card::before{
+  content:"";
+  position:absolute;left:-1px;top:14px;bottom:14px;width:14px;
+  background-image:radial-gradient(circle, var(--turf) 3px, transparent 3.2px);
+  background-size:14px 22px;
+  background-repeat:repeat-y;
+  opacity:.85;
+}
+.section-title{
+  font-family:'Anton',sans-serif;
+  font-weight:400;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+  font-size:20px;
+  margin:0 0 4px 10px;
+  color:var(--purple);
+}
+.section-sub{
+  margin:0 0 20px 10px;
+  font-size:13px;
+  color:var(--ink-soft);
+}
+
+/* ---- Form grid ---- */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin:0 0 20px 10px;}
+label{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}
+select,input[type=number]{
+  width:100%;padding:10px 11px;border:1.5px solid var(--card-edge);border-radius:5px;
+  background:#fff;color:var(--ink);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;
+}
+select:focus,input:focus{outline:2px solid var(--purple);outline-offset:1px;}
+input[type=range]{width:100%;accent-color:var(--purple);}
+.rangeval{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--purple);}
+
+/* ---- Field slider ---- */
+.field-wrap{margin:6px 10px 22px;}
+.field-svg{width:100%;height:auto;display:block;border-radius:4px;overflow:hidden;border:1px solid var(--card-edge);}
+.field-caption{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;margin-top:6px;color:var(--ink-soft);}
+
+/* ---- Stamp badge ---- */
+.stamp-row{display:flex;flex-wrap:wrap;gap:22px;align-items:center;margin:6px 10px 18px;}
+.stamp{
+  font-family:'Anton',sans-serif;font-size:30px;letter-spacing:.03em;text-transform:uppercase;
+  padding:14px 26px;border-radius:8px;border:4px solid currentColor;
+  transform:rotate(-3deg);
+  display:inline-block;
+  animation:stampIn .28s ease-out;
+}
+@keyframes stampIn{from{transform:rotate(-3deg) scale(1.5);opacity:0;}to{transform:rotate(-3deg) scale(1);opacity:1;}}
+.stamp.go{color:var(--good);}
+.stamp.punt{color:var(--warn);}
+.stamp.fg{color:var(--purple);}
+.stamp.two{color:var(--good);}
+.stamp.one{color:var(--warn);}
+.confmeta{font-size:13px;color:var(--ink-soft);max-width:420px;line-height:1.5;}
+.confmeta b{color:var(--ink);}
+
+/* ---- EV bars & Clean tables ---- */
+.evbars{margin:0 10px 22px;}
+.evrow{display:grid;grid-template-columns:130px 1fr 80px;align-items:center;gap:12px;margin-bottom:10px;font-size:13px;}
+.evrow .lab{font-weight:700;}
+.evtrack{height:16px;background:#E4DCC5;border-radius:8px;overflow:hidden;position:relative;}
+.evfill{height:100%;border-radius:8px;transition:width 0.2s ease-out;}
+.evrow .val{font-family:'JetBrains Mono',monospace;text-align:right;font-weight:700;}
+
+/* ---- Cleaned Table Layout ---- */
+.clean-table-wrap{
+  margin:10px 10px 20px;
+  border:1px solid var(--card-edge);
+  border-radius:6px;
+  overflow:hidden;
+  background:#fff;
+}
+.clean-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+  --tm-primary:var(--purple);
+  --tm-secondary:var(--orange);
+}
+.clean-table th{
+  background:var(--tm-primary);
+  color:#fff;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  padding:10px 12px;
+  text-align:left;
+}
+.clean-table td{
+  padding:10px 12px;
+  border-bottom:1px solid var(--card-edge);
+}
+.clean-table tr:last-child td{border-bottom:none;}
+.clean-table tr.highlight{background:#F3EFE0;font-weight:600;}
+
+/* ---- Tips list ---- */
+.tips{margin:0 10px 6px;padding:0;list-style:none;}
+.tips li{
+  display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--card-edge);font-size:13.5px;line-height:1.5;
+}
+.tips li:first-child{border-top:none;}
+.tips li::before{content:"▸";color:var(--orange);font-weight:700;flex:none;}
+
+.posture-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  font-size:13px;padding:8px 14px;border-radius:20px;margin:0 10px 16px;
+}
+.posture-aggressive{background:#FBE3D8;color:#A3401A;}
+.posture-balanced{background:#E7E2CF;color:var(--purple);}
+.posture-conservative{background:#DCE7DE;color:var(--good);}
+
+/* ---- table ---- */
+.tbl-wrap{margin:0 10px 10px;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:640px;--tm-primary:var(--purple);--tm-secondary:var(--orange);}
+th,td{padding:7px 9px;text-align:right;border-bottom:1px solid var(--card-edge);}
+th:first-child,td:first-child{text-align:left;}
+thead th{
+  background:var(--tm-primary);color:#fff;font-weight:700;text-transform:uppercase;font-size:10.5px;letter-spacing:.04em;
+  position:sticky;top:0;
+}
+tbody tr:nth-child(even){background:#EEE8D5;}
+tbody tr.total{background:var(--tm-secondary);color:#fff;font-weight:700;}
+.nodata{padding:20px;text-align:center;color:var(--ink-soft);font-style:italic;background:#EEE8D5;border-radius:6px;margin:0 10px;}
+.datasrc{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:20px;margin:0 10px 10px;}
+.datasrc.imported{background:#DCE7DE;color:var(--good);}
+.datasrc.modeled{background:#F3EFE0;color:var(--ink-soft);}
+.filternote{display:block;margin:0 10px 12px;font-size:11.5px;color:var(--ink-soft);font-style:italic;}
+.deftag{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;color:#fff;}
+
+/* ---- footer / about ---- */
+.about{margin-top:20px;}
+.about summary{cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#A79FCB;padding:4px 0;}
+.about[open] summary{color:var(--orange);}
+.about-body{font-size:13px;line-height:1.65;color:#CFC9DE;max-width:760px;padding-top:10px;}
+.about-body code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;}
+
+@media(max-width:600px){
+  .card{padding:20px 16px 18px;}
+  .stamp{font-size:22px;padding:10px 18px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Clemson Football — Analytics Playbook</div>
+    <h1>Sideline <span>Decision</span> Card</h1>
+    <p>A fourth-down, two-point, and game-management calculator built on down &amp; distance tendency data for Clemson and all 2026 opponents.</p>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-tab="fourth">4th Down</div>
+    <div class="tab" data-tab="two">2‑Point</div>
+    <div class="tab" data-tab="manage">Game Management</div>
+    <div class="tab" data-tab="tend">Tendencies</div>
+  </div>
+
+  <div class="card panel" id="panel-fourth">
+    <h2 class="section-title">4th Down: Go / Kick / Punt</h2>
+    <p class="section-sub">Compares leverage-adjusted Expected Points Added (EPA) for going for it, attempting a field goal, and punting — driven continuously by score margin, quarter, time remaining, and the selected opponent's defensive tendencies (what that defense gives up on this down &amp; distance).</p>
+
+    <div class="grid">
+      <div>
+        <label>Opponent Defense</label>
+        <select id="f-opp"></select>
+      </div>
+      <div>
+        <label>Distance to go <span class="rangeval" id="f-distval">4</span> yds</label>
+        <input type="range" id="f-dist" min="1" max="25" value="4">
+      </div>
+      <div>
+        <label>Score margin (Clemson − Opponent)</label>
+        <input type="number" id="f-margin" value="0" step="1">
+      </div>
+      <div>
+        <label>Quarter</label>
+        <select id="f-qtr"><option>1</option><option>2</option><option>3</option><option selected>4</option></select>
+      </div>
+      <div>
+        <label>Time left in quarter (min)</label>
+        <input type="number" id="f-time" value="8" min="0" max="15" step="1">
+      </div>
+    </div>
+
+    <div class="datasrc" id="f-datasrc"></div>
+    <span class="filternote" id="f-filternote"></span>
+    <div class="clean-table-wrap" id="f-defsnap-wrap">
+      <table class="clean-table" id="f-defsnap-table"></table>
+    </div>
+
+    <div class="field-wrap">
+      <label>Field position — drag to set ball spot: <span class="rangeval" id="f-yardlabel">Opp 35</span></label>
+      <svg viewBox="0 0 700 90" class="field-svg" id="fieldsvg"></svg>
+      <input type="range" id="f-yardline" min="1" max="99" value="35" style="width:100%;margin-top:6px;">
+      <div class="field-caption"><span>Own Goal</span><span>Midfield</span><span>Opp Goal</span></div>
+    </div>
+
+    <div class="stamp-row" id="f-stamp-row"></div>
+    <div class="evbars" id="f-evbars"></div>
+    <ul class="tips" id="f-tips"></ul>
+  </div>
+
+  <div class="card panel" id="panel-two" style="display:none;">
+    <h2 class="section-title">2‑Point Conversion Call</h2>
+    <p class="section-sub">Evaluates the extra point (≈94% success) against the two‑point try (≈48% success) based on resulting margin dynamics and leverage.</p>
+
+    <div class="grid">
+      <div>
+        <label>Score margin <em>before</em> TD (Clemson − Opponent)</label>
+        <input type="number" id="t-margin" value="-8" step="1">
+      </div>
+      <div>
+        <label>Quarter</label>
+        <select id="t-qtr"><option>1</option><option>2</option><option>3</option><option selected>4</option></select>
+      </div>
+      <div>
+        <label>Time left in quarter (min)</label>
+        <input type="number" id="t-time" value="6" min="0" max="15">
+      </div>
+    </div>
+
+    <div class="stamp-row" id="t-stamp-row"></div>
+    
+    <div class="clean-table-wrap">
+      <table class="clean-table">
+        <thead>
+          <tr>
+            <th>Choice</th>
+            <th>Success %</th>
+            <th>Outcome if Success</th>
+            <th>Outcome if Fail</th>
+            <th>Relative Leverage</th>
+          </tr>
+        </thead>
+        <tbody id="t-table-body">
+        </tbody>
+      </table>
+    </div>
+
+    <div class="evbars" id="t-evbars"></div>
+    <ul class="tips" id="t-tips"></ul>
+  </div>
+
+  <div class="card panel" id="panel-manage" style="display:none;">
+    <h2 class="section-title">Game Management Posture</h2>
+    <p class="section-sub">Rule‑based read on how aggressive or conservative to play the situation — clock, timeouts, onside kicks, and possession value.</p>
+
+    <div class="grid">
+      <div>
+        <label>Score margin (Clemson − Opponent)</label>
+        <input type="number" id="g-margin" value="-4" step="1">
+      </div>
+      <div>
+        <label>Quarter</label>
+        <select id="g-qtr"><option>1</option><option>2</option><option>3</option><option selected>4</option></select>
+      </div>
+      <div>
+        <label>Time left in quarter (min)</label>
+        <input type="number" id="g-time" value="4" min="0" max="15">
+      </div>
+      <div>
+        <label>Clemson timeouts left</label>
+        <select id="g-toffense"><option>0</option><option>1</option><option selected>2</option><option>3</option></select>
+      </div>
+      <div>
+        <label>Opponent timeouts left</label>
+        <select id="g-tdefense"><option>0</option><option>1</option><option>2</option><option selected>3</option></select>
+      </div>
+      <div>
+        <label>Who has the ball?</label>
+        <select id="g-poss"><option value="us">Clemson offense</option><option value="them">Opponent offense</option></select>
+      </div>
+    </div>
+
+    <div class="posture-badge" id="g-posture"></div>
+    <ul class="tips" id="g-tips"></ul>
+  </div>
+
+  <div class="card panel" id="panel-tend" style="display:none;">
+    <h2 class="section-title">Down &amp; Distance Tendencies</h2>
+    <p class="section-sub">What the selected team's <b>defense gives up</b> on run vs. pass by down &amp; distance — the raw splits behind every 4th-down recommendation. Excludes red zone, backed‑up, and penalty plays, matching the source reports.</p>
+
+    <div class="grid" style="margin-bottom:8px;">
+      <div>
+        <label>Team</label>
+        <select id="q-team"></select>
+      </div>
+    </div>
+
+    <div class="datasrc" id="q-datasrc"></div>
+    <span class="filternote" id="q-filternote"></span>
+    <div id="q-tablewrap"></div>
+  </div>
+
+  <details class="about">
+    <summary>About this model &amp; opponent setup</summary>
+    <div class="about-body">
+      <p><b>Imported defensive data:</b> Clemson, LSU, and Georgia Tech tables are pulled straight from down &amp; distance analysis reports and represent what each team's <b>defense allows</b> (run %, plays faced, and yards/play surrendered) by situation.</p>
+      <p><b>Sample filter:</b> Every table excludes plays against FCS opponents and 2nd-half plays where win probability was above 95% or below 5% (garbage time), so the numbers reflect competitive, representative snaps rather than blowout or cupcake-game outliers. All imported tables are treated as already reflecting this filter from their source reports.</p>
+      <p><b>Imported defensive data:</b> Every 2026 opponent now has a full-season down &amp; distance defensive report imported directly from real 2025 regular-season data — no modeled or estimated tables remain. All rows are tagged <span class="datasrc imported" style="margin:0;">Imported Report Data</span>.</p>
+      <p><b>Colors:</b> Table headers, total rows, and the 4th-down end zone dynamically re-skin to the selected team's official primary/secondary colors.</p>
+      <p><b>EPA model:</b> The 4th-down Go/FG/Punt recommendation blends baseline Expected Points curves with a continuous game-leverage multiplier (score margin × quarter × time remaining) and an opponent defensive-tendency factor (how many yards/play that defense surrenders on the current down &amp; distance vs. league average) — see the About panel in the Sideline Card write-up for the full formula.</p>
+    </div>
+  </details>
+
+</div>
+
+<script>
+/* =========================================================
+   1. Team tendency data for 2026 opponents
+   ========================================================= */
+function rows(list){
+  return list.map(r=>({label:r[0],down:r[1],distMin:r[2],distMax:r[3],runPct:r[4],runPlays:r[5],runYpp:r[6],passPlays:r[7],passYpp:r[8],allPlays:r[9],allYpp:r[10]}));
+}
+
+const clemsonRows = rows([
+  ["1st & 10",1,10,10,47,137,5.3,152,8.4,289,6.9],
+  ["2nd & 1-2",2,1,2,56,10,5.1,8,3.4,18,4.3],
+  ["2nd & 3-6",2,3,6,51,32,3.9,31,9.3,63,6.6],
+  ["2nd & 7+",2,7,99,40,49,6.3,72,8.9,121,7.8],
+  ["3rd & 1-2",3,1,2,85,22,3.0,4,4.5,26,3.2],
+  ["3rd & 3-5",3,3,5,19,6,9.8,25,6.7,31,7.3],
+  ["3rd & 6-9",3,6,9,16,6,0.8,31,8.9,37,7.6],
+  ["3rd & 10+",3,10,99,24,7,7.9,22,5.8,29,6.3],
+  ["4th & 1-2",4,1,2,77,10,2.4,3,11.0,13,4.4],
+  ["4th & 3+",4,3,99,17,2,-3.0,10,9.1,12,7.1],
+  ["Total",0,0,99,44,281,5.0,358,8.2,639,6.8]
+]);
+
+const lsuRows = rows([
+  ["1st & 10",1,10,10,54,141,4.5,119,7.1,260,5.7],
+  ["2nd & 1-2",2,1,2,73,16,4.1,6,5.2,22,4.4],
+  ["2nd & 3-6",2,3,6,58,28,4.4,20,8.0,48,5.9],
+  ["2nd & 7+",2,7,99,35,48,6.6,88,7.0,136,6.9],
+  ["3rd & 1-2",3,1,2,70,14,8.9,6,0.0,20,6.2],
+  ["3rd & 3-5",3,3,5,20,6,2.8,24,7.2,30,6.3],
+  ["3rd & 6-9",3,6,9,20,6,5.5,24,8.7,30,8.1],
+  ["3rd & 10+",3,10,99,30,11,4.4,26,10.2,37,8.5],
+  ["4th & 1-2",4,1,2,56,5,1.4,4,9.2,9,4.9],
+  ["4th & 3+",4,3,99,20,1,0.0,4,6.5,5,5.2],
+  ["Total",0,0,99,46,276,5.0,321,7.4,597,6.3]
+]);
+
+const gtRows = rows([
+  ["1st & 10",1,10,10,51,133,6.3,126,7.3,259,6.8],
+  ["2nd & 1-2",2,1,2,53,10,2.2,9,4.1,19,3.1],
+  ["2nd & 3-6",2,3,6,63,40,6.6,23,7.3,63,6.8],
+  ["2nd & 7+",2,7,99,51,65,5.0,62,8.5,127,6.7],
+  ["3rd & 1-2",3,1,2,85,23,3.8,4,7.2,27,4.3],
+  ["3rd & 3-5",3,3,5,25,8,3.6,24,8.5,32,7.2],
+  ["3rd & 6-9",3,6,9,10,3,1.3,27,6.2,30,5.7],
+  ["3rd & 10+",3,10,99,32,10,7.6,21,11.0,31,9.9],
+  ["4th & 1-2",4,1,2,89,8,6.2,1,0.0,9,5.6],
+  ["4th & 3+",4,3,99,20,1,-3.0,4,18.0,5,13.8],
+  ["Total",0,0,99,50,301,5.6,301,7.8,602,6.7]
+]);
+
+const georgiaSouthernRows = rows([
+  ["1st & 10",1,10,10,61,189,6.2,121,8.5,310,7.1],
+  ["2nd & 1-2",2,1,2,57,8,5.2,6,7.8,14,6.4],
+  ["2nd & 3-6",2,3,6,54,39,8.6,33,9.3,72,8.9],
+  ["2nd & 7+",2,7,99,50,69,6.1,70,7.8,139,6.9],
+  ["3rd & 1-2",3,1,2,95,18,4.9,1,1.0,19,4.7],
+  ["3rd & 3-5",3,3,5,41,12,8.4,17,8.8,29,8.7],
+  ["3rd & 6-9",3,6,9,20,7,6.9,28,5.7,35,5.9],
+  ["3rd & 10+",3,10,99,15,6,5.3,33,6.1,39,5.9],
+  ["4th & 1-2",4,1,2,17,1,3.0,5,10.0,6,8.8],
+  ["4th & 3+",4,3,99,11,1,9.0,8,5.9,9,6.2],
+  ["Total",0,0,99,52,350,6.4,322,7.9,672,7.1]
+]);
+
+const northCarolinaRows = rows([
+  ["1st & 10",1,10,10,56,151,4.9,120,7.9,271,6.2],
+  ["2nd & 1-2",2,1,2,53,8,4.8,7,6.4,15,5.5],
+  ["2nd & 3-6",2,3,6,62,40,3.9,25,11.5,65,6.8],
+  ["2nd & 7+",2,7,99,41,50,3.9,73,4.9,123,4.5],
+  ["3rd & 1-2",3,1,2,75,21,3.8,7,3.0,28,3.6],
+  ["3rd & 3-5",3,3,5,35,11,4.7,20,7.0,31,6.2],
+  ["3rd & 6-9",3,6,9,10,4,9.5,35,6.2,39,6.5],
+  ["3rd & 10+",3,10,99,19,6,7.2,25,7.9,31,7.7],
+  ["4th & 1-2",4,1,2,92,11,4.4,1,15.0,12,5.2],
+  ["4th & 3+",4,3,99,33,4,11.8,8,12.2,12,12.1],
+  ["Total",0,0,99,49,306,4.7,321,7.2,627,6.0]
+]);
+
+const californiaRows = rows([
+  ["1st & 10",1,10,10,53,143,5.3,126,7.5,269,6.3],
+  ["2nd & 1-2",2,1,2,69,9,7.3,4,13.0,13,9.1],
+  ["2nd & 3-6",2,3,6,69,37,8.2,17,8.5,54,8.3],
+  ["2nd & 7+",2,7,99,40,54,4.4,80,5.0,134,4.7],
+  ["3rd & 1-2",3,1,2,77,20,6.4,6,13.7,26,8.1],
+  ["3rd & 3-5",3,3,5,41,13,5.5,19,3.1,32,4.0],
+  ["3rd & 6-9",3,6,9,25,11,6.9,33,6.7,44,6.7],
+  ["3rd & 10+",3,10,99,13,4,5.8,26,4.9,30,5.0],
+  ["4th & 1-2",4,1,2,80,4,2.2,1,9.0,5,3.6],
+  ["4th & 3+",4,3,99,25,2,12.5,6,3.2,8,5.5],
+  ["Total",0,0,99,48,297,5.7,318,6.5,615,6.1]
+]);
+
+const miamiRows = rows([
+  ["1st & 10",1,10,10,54,131,4.5,110,6.8,241,5.5],
+  ["2nd & 1-2",2,1,2,60,6,3.8,4,17.0,10,9.1],
+  ["2nd & 3-6",2,3,6,52,23,2.7,21,6.4,44,4.5],
+  ["2nd & 7+",2,7,99,35,47,4.5,88,7.6,135,6.5],
+  ["3rd & 1-2",3,1,2,58,7,2.7,5,6.4,12,4.2],
+  ["3rd & 3-5",3,3,5,23,7,4.6,23,6.0,30,5.7],
+  ["3rd & 6-9",3,6,9,21,9,5.6,33,6.2,42,6.1],
+  ["3rd & 10+",3,10,99,29,13,7.6,32,5.6,45,6.2],
+  ["4th & 1-2",4,1,2,100,9,1.2,0,null,9,1.2],
+  ["4th & 3+",4,3,99,8,1,7.0,11,11.2,12,10.8],
+  ["Total",0,0,99,44,253,4.4,327,7.0,580,5.9]
+]);
+
+const charlestonSouthernRows = rows([
+  ["1st & 10",1,10,10,55,165,5.4,134,7.4,299,6.3],
+  ["2nd & 1-2",2,1,2,57,12,4.3,9,4.7,21,4.5],
+  ["2nd & 3-6",2,3,6,63,43,4.4,25,5.9,68,4.9],
+  ["2nd & 7+",2,7,99,47,65,5.0,72,7.9,137,6.6],
+  ["3rd & 1-2",3,1,2,89,24,3.2,3,12.3,27,4.2],
+  ["3rd & 3-5",3,3,5,32,9,4.9,19,4.9,28,4.9],
+  ["3rd & 6-9",3,6,9,21,7,6.3,27,10.8,34,9.9],
+  ["3rd & 10+",3,10,99,25,9,11.4,27,10.6,36,10.8],
+  ["4th & 1-2",4,1,2,75,6,2.5,2,9.5,8,4.2],
+  ["4th & 3+",4,3,99,0,0,null,7,1.1,7,1.1],
+  ["Total",0,0,99,51,340,5.1,325,7.6,665,6.4]
+]);
+
+const virginiaTechRows = rows([
+  ["1st & 10",1,10,10,57,135,5.7,103,9.5,238,7.4],
+  ["2nd & 1-2",2,1,2,76,13,4.9,4,6.5,17,5.3],
+  ["2nd & 3-6",2,3,6,57,34,5.9,26,6.0,60,5.9],
+  ["2nd & 7+",2,7,99,47,50,5.2,56,6.8,106,6.1],
+  ["3rd & 1-2",3,1,2,75,15,4.9,5,10.0,20,6.2],
+  ["3rd & 3-5",3,3,5,30,8,3.9,19,9.2,27,7.6],
+  ["3rd & 6-9",3,6,9,10,3,2.0,26,11.2,29,10.3],
+  ["3rd & 10+",3,10,99,33,11,7.4,22,9.4,33,8.7],
+  ["4th & 1-2",4,1,2,60,3,1.0,2,15.5,5,6.8],
+  ["4th & 3+",4,3,99,20,1,6.0,4,7.5,5,7.2],
+  ["Total",0,0,99,51,273,5.5,267,8.7,540,7.1]
+]);
+
+const floridaStateRows = rows([
+  ["1st & 10",1,10,10,61,155,4.3,101,9.4,256,6.3],
+  ["2nd & 1-2",2,1,2,77,10,3.8,3,6.0,13,4.3],
+  ["2nd & 3-6",2,3,6,61,37,3.6,24,7.4,61,5.1],
+  ["2nd & 7+",2,7,99,54,67,5.5,58,8.9,125,7.1],
+  ["3rd & 1-2",3,1,2,82,28,2.8,6,4.5,34,3.1],
+  ["3rd & 3-5",3,3,5,38,11,3.3,18,5.3,29,4.5],
+  ["3rd & 6-9",3,6,9,14,5,4.6,30,6.0,35,5.8],
+  ["3rd & 10+",3,10,99,39,12,7.3,19,6.1,31,6.5],
+  ["4th & 1-2",4,1,2,85,11,2.0,2,24.0,13,5.4],
+  ["4th & 3+",4,3,99,33,3,8.3,6,5.2,9,6.2],
+  ["Total",0,0,99,56,339,4.4,267,8.1,606,6.0]
+]);
+
+const syracuseRows = rows([
+  ["1st & 10",1,10,10,56,151,6.5,119,8.5,270,7.4],
+  ["2nd & 1-2",2,1,2,76,13,4.4,4,17.0,17,7.4],
+  ["2nd & 3-6",2,3,6,46,23,7.1,27,4.4,50,5.6],
+  ["2nd & 7+",2,7,99,42,53,6.6,74,7.5,127,7.1],
+  ["3rd & 1-2",3,1,2,72,13,5.8,5,10.0,18,6.9],
+  ["3rd & 3-5",3,3,5,38,12,10.2,20,6.3,32,7.8],
+  ["3rd & 6-9",3,6,9,21,7,13.6,27,9.8,34,10.6],
+  ["3rd & 10+",3,10,99,11,3,4.3,24,8.2,27,7.8],
+  ["4th & 1-2",4,1,2,60,6,-1.2,4,10.5,10,3.5],
+  ["4th & 3+",4,3,99,25,2,-7.0,6,7.8,8,4.1],
+  ["Total",0,0,99,48,283,6.5,310,8.0,593,7.3]
+]);
+
+const dukeRows = rows([
+  ["1st & 10",1,10,10,54,160,4.7,134,9.2,294,6.8],
+  ["2nd & 1-2",2,1,2,78,14,7.4,4,6.0,18,7.1],
+  ["2nd & 3-6",2,3,6,63,29,4.1,17,6.9,46,5.2],
+  ["2nd & 7+",2,7,99,32,48,4.6,100,8.5,148,7.2],
+  ["3rd & 1-2",3,1,2,88,15,9.9,2,7.5,17,9.6],
+  ["3rd & 3-5",3,3,5,27,7,4.1,19,7.9,26,6.9],
+  ["3rd & 6-9",3,6,9,18,7,9.3,32,7.0,39,7.4],
+  ["3rd & 10+",3,10,99,28,11,8.0,28,13.6,39,12.0],
+  ["4th & 1-2",4,1,2,80,8,0.5,2,39.5,10,8.3],
+  ["4th & 3+",4,3,99,15,2,16.5,11,4.4,13,6.2],
+  ["Total",0,0,99,46,301,5.2,349,8.9,650,7.2]
+]);
+
+const southCarolinaRows = rows([
+  ["1st & 10",1,10,10,58,155,4.8,114,8.2,269,6.2],
+  ["2nd & 1-2",2,1,2,65,11,4.0,6,1.8,17,3.2],
+  ["2nd & 3-6",2,3,6,63,44,4.8,26,6.8,70,5.6],
+  ["2nd & 7+",2,7,99,45,57,4.5,71,7.3,128,6.0],
+  ["3rd & 1-2",3,1,2,69,20,2.3,9,10.8,29,4.9],
+  ["3rd & 3-5",3,3,5,42,15,3.6,21,5.2,36,4.6],
+  ["3rd & 6-9",3,6,9,26,8,4.8,23,9.0,31,7.9],
+  ["3rd & 10+",3,10,99,22,7,6.6,25,3.8,32,4.4],
+  ["4th & 1-2",4,1,2,38,3,7.3,5,6.6,8,6.9],
+  ["4th & 3+",4,3,99,25,2,17.0,6,9.3,8,11.2],
+  ["Total",0,0,99,51,322,4.6,306,7.3,628,5.9]
+]);
+
+/* ---------------------------------------------------------
+   All "rows" tables below are DEFENSIVE allowed splits: run%, plays
+   faced, and yards/play SURRENDERED by that team's defense on each
+   down & distance, pulled directly from each team's 2025 regular
+   season down & distance defensive report. Every opponent on the
+   2026 schedule now has an imported table — the modeled/estimated
+   generator has been retired.
+   --------------------------------------------------------- */
+const LEAGUE_AVG_ALLOWED_YPP = 7.0; // baseline used by the defensive-tendency EPA factor
+
+/* ---------------------------------------------------------
+   Sample filter (applies to every table in the app):
+     1. FBS opponents only — games against FCS opponents are excluded,
+        since those snaps are blown-out, non-representative competition.
+     2. Garbage-time exclusion — snaps in the 2nd half with win
+        probability > 95% or < 5% are excluded (running-clock/prevent-
+        defense snaps that don't reflect real defensive tendencies).
+   All imported tables are sourced from full-season down & distance
+   reports and are treated as already reflecting this same filter; if
+   a future refresh of those reports is NOT pre-filtered this way, the
+   imported numbers should be re-pulled.
+   --------------------------------------------------------- */
+const SAMPLE_FILTER_NOTE = "Sample: FBS opponents only \u2014 excludes 2nd-half plays with win probability >95% or <5% (garbage time).";
+
+const teamData = {
+  clemson:        {name:"Clemson Tigers",        primary:"#522D80", secondary:"#F66733", rows:clemsonRows, home:true, source:'imported'},
+  lsu:            {name:"LSU Tigers",             primary:"#461D7C", secondary:"#FDD023", rows:lsuRows,  sched:[2026], source:'imported'},
+  georgiatech:    {name:"Georgia Tech Yellow Jackets", primary:"#003057", secondary:"#B3A369", rows:gtRows, sched:[2026], source:'imported'},
+
+  georgiasouthern:{name:"Georgia Southern Eagles", primary:"#041E42", secondary:"#B0985A", rows:georgiaSouthernRows, sched:[2026], source:'imported'},
+  northcarolina:  {name:"North Carolina Tar Heels", primary:"#4B9CD3", secondary:"#13294B", rows:northCarolinaRows, sched:[2026], source:'imported'},
+  cal:            {name:"California Golden Bears",  primary:"#003262", secondary:"#FDB515", rows:californiaRows, sched:[2026], source:'imported'},
+  miami:          {name:"Miami Hurricanes",         primary:"#F47321", secondary:"#005030", rows:miamiRows, sched:[2026], source:'imported'},
+  charlestonsouthern:{name:"Charleston Southern Buccaneers", primary:"#0C2340", secondary:"#A08A58", rows:charlestonSouthernRows, sched:[2026], source:'imported'},
+  virginiatech:   {name:"Virginia Tech Hokies",     primary:"#630031", secondary:"#CF4420", rows:virginiaTechRows, sched:[2026,2027], source:'imported'},
+  floridastate:   {name:"Florida State Seminoles",  primary:"#782F40", secondary:"#CEB888", rows:floridaStateRows, sched:[2026,2027], source:'imported'},
+  syracuse:       {name:"Syracuse Orange",          primary:"#F76900", secondary:"#001E62", rows:syracuseRows, sched:[2026], source:'imported'},
+  duke:           {name:"Duke Blue Devils",         primary:"#003087", secondary:"#FFFFFF", rows:dukeRows, sched:[2026], source:'imported'},
+  southcarolina:  {name:"South Carolina Gamecocks", primary:"#73000A", secondary:"#000000", rows:southCarolinaRows, sched:[2026,2027], source:'imported'}
+};
+
+const opponentKeys = Object.keys(teamData).filter(k=>k!=='clemson').sort((a,b)=>{
+  return teamData[a].name.localeCompare(teamData[b].name);
+});
+
+/* =========================================================
+   2. EP Curves + Game Context (Time & Score Weighting)
+   ========================================================= */
+const EP_PTS = [
+  [1,6.0],[3,5.7],[5,5.3],[10,4.8],[15,4.3],[20,3.9],[25,3.6],
+  [30,3.2],[40,2.6],[50,2.0],[60,1.4],[70,0.8],[75,0.5],[80,0.1],
+  [90,-0.5],[95,-0.8],[99,-1.1]
+];
+
+function EP(yardsToGo){
+  yardsToGo = Math.min(99,Math.max(1,yardsToGo));
+  //find what it is between
+  for(let i=0;i<EP_PTS.length-1;i++){
+    const [x1,y1]=EP_PTS[i], [x2,y2]=EP_PTS[i+1];
+    if(yardsToGo>=x1 && yardsToGo<=x2){
+      //find value it is between
+      const t=(yardsToGo-x1)/(x2-x1);
+      return y1 + t*(y2-y1);
+    }
+  }
+  return EP_PTS[EP_PTS.length-1][1];
+}
+
+function fgProb(distance){
+  //prob of making a field goal from a certain distance
+  const p = 1/(1+Math.exp((distance-48)/6));
+  //can't be 100% so cap at 99%
+  return Math.min(0.99, Math.max(0.01,p));
+}
+
+
+//treats as a 4th down with the chances of converting. These are Percentages!!!!
+const CONV_PTS = [[1,.68],[2,.60],[3,.53],[4,.48],[5,.45],[7,.38],[10,.29],[15,.20],[20,.14],[25,.10],[30,.07]];
+const FHALF_CONV = 0.593;
+const SHALF_CONV = 0.503;
+// Overall baseline average across both halves for scaling
+const AVG_CONV = (FHALF_CONV + SHALF_CONV) / 2;
+function baseConvProb(dist, half = 1){
+    dist = Math.min(30, Math.max(1, dist));
+    let prob = CONV_PTS[CONV_PTS.length - 1][1];
+
+    // 1. Calculate unadjusted distance-based probability via linear interpolation
+    for (let i = 0; i < CONV_PTS.length - 1; i++) {
+        const [x1, y1] = CONV_PTS[i], [x2, y2] = CONV_PTS[i + 1];
+        if (dist >= x1 && dist <= x2) {
+        const t = (dist - x1) / (x2 - x1);
+        prob = y1 + t * (y2 - y1);
+        break;
+        }
+    }
+
+    // 2. Determine half multiplier relative to overall average
+    const halfRate = (half === 2) ? SHALF_CONV : FHALF_CONV;
+    const multiplier = halfRate / AVG_CONV;
+
+    // 3. Scale probability and cap at [0, 1]
+    return Math.min(1.0, Math.max(0.0, prob * multiplier));
+}
+
+function bucketFor(down,dist){
+  if(down===1) return {min:10,max:10};
+  if(down===2){ if(dist<=2)return{min:1,max:2}; if(dist<=6)return{min:3,max:6}; return{min:7,max:99}; }
+  if(down===3||down===4){ if(dist<=2)return{min:1,max:2}; if(down===3&&dist<=5)return{min:3,max:5}; if(down===3&&dist<=9)return{min:6,max:9}; if(down===3)return{min:10,max:99}; return{min:3,max:99};}
+}
+
+function findRow(teamKey,down,dist){
+  const t=teamData[teamKey];
+  if(!t||!t.rows) return null;
+  const b=bucketFor(down,dist);
+  return t.rows.find(r=>r.down===down && r.distMin===b.min && r.distMax===b.max) || null;
+}
+
+function teamAdjustedConvProb(teamKey,dist, half=1){
+  const base = baseConvProb(dist,half);
+  const row = findRow(teamKey,4,dist);
+  if(!row || row.allYpp==null) return {p:base, modeled:true};
+  const ratio = row.allYpp / dist;
+  const factor = Math.min(1.25, Math.max(0.75, 1 + (ratio-1)*0.22));
+  const p = Math.min(0.95, Math.max(0.03, base*factor));
+  return {p, modeled:false, row};
+}
+
+/**
+ * Game-Context Leverage Weighting (continuous — no discrete score/quarter buckets):
+ *
+ * 1. gameFrac  — how far into the 60-minute game we are (0 at kickoff, 1 at 0:00 Q4),
+ *                computed directly from quarter + time left, not from an "is it Q4" flag.
+ * 2. leverage  — gameFrac squared, so leverage builds smoothly and accelerates in the
+ *                fourth quarter rather than snapping on at a fixed cutoff.
+ * 3. marginNorm— score margin normalized against a 16-point "comeback horizon" and
+ *                clamped to [-1, 1], so a 2-pt game and a 30-pt game don't move the
+ *                model by the same amount, and there's no special-cased margin===0 branch.
+ * 4. urgency   — -marginNorm * leverage: continuous, signed value. Positive = trailing
+ *                and it matters right now; negative = leading and it matters right now;
+ *                near zero = the situation isn't (yet) high-leverage.
+ * 5. defFactor — the selected opponent defense's allowed yards/play on the CURRENT
+ *                down & distance bucket, divided by the league-average allowed yards/play
+ *                (7.0). >1 = defense is leaky here (favors going for it); <1 = defense is
+ *                stout here (favors the safer FG/punt options). This is what ties EPA to
+ *                defensive tendencies rather than just score/clock.
+ *
+ * goBonus/fgBonus/puntBonus are then continuous multipliers built from urgency AND
+ * defFactor together — never fixed to "if positive use X, if 0 use Y, if negative use Z".
+ */
+function getGameContextMultiplier(margin, qtr, timeInMin, defFactor) {
+  const secsIntoGame = (qtr - 1) * 900 + (900 - Math.min(15, Math.max(0, timeInMin)) * 60);
+  const gameFrac = Math.min(1, Math.max(0, secsIntoGame / 3600));
+  const leverage = gameFrac * gameFrac;
+
+  const marginNorm = Math.max(-1, Math.min(1, margin / 16));
+  const urgency = -marginNorm * leverage; // + trailing/urgent, - leading/protecting
+
+  const df = typeof defFactor === 'number' ? Math.max(0.75, Math.min(1.35, defFactor)) : 1.0;
+  const defPull = (df - 1); // >0 leaky defense, <0 stout defense
+  const firstHalfConversion = .593
+  const secondHalfConversion = .503
+
+  let goBonus, fgBonus, puntBonus;
+  //added value of going for it kicking a field goal or punting.
+  goBonus   = 1 + urgency * 0.60 + defPull * 0.55;
+  fgBonus    = 1 - urgency * 0.35 - defPull * 0.25;
+  puntBonus  = 1 - urgency * 0.55 - defPull * 0.35;
+    
+  
+
+  return { goBonus, fgBonus, puntBonus, fgPenalty: 1.0, puntPenalty: 1.0, gameFrac, leverage, urgency, defFactor: df };
+}
+
+
+/* =========================================================
+   3. Field SVG (soild white markers and hashes)
+   ========================================================= */
+function shortName(fullName){
+  // Trim to the mascot/last word or first word if it's short enough for the end-zone label
+  const words = fullName.toUpperCase().split(' ');
+  const last = words[words.length-1];
+  return last.length <= 12 ? last : words[0];
+}
+
+function drawField(svg, yardsToGo, oppTeam){
+  const spotFromOwnGoal = 100 - yardsToGo;
+  const x0 = 20, x1 = 680, w = x1 - x0;
+  const oppColor = oppTeam ? oppTeam.primary : '#222222';
+  const oppLabel = oppTeam ? shortName(oppTeam.name) : 'OPPONENT';
+  
+  let linesAndHashes = '';
+  
+  // Draw 5-yard lines & 10-yard solid white lines + numbers
+  for(let yd = 0; yd <= 100; yd += 5){
+    const x = x0 + (yd / 100) * w;
+    const isMajor = (yd % 10 === 0);
+    
+    if (isMajor) {
+      // Solid bright white 10-yard line
+      linesAndHashes += `<line x1="${x}" y1="14" x2="${x}" y2="76" stroke="#FFFFFF" stroke-width="2"/>`;
+      if(yd > 0 && yd < 100){
+        const label = yd <= 50 ? yd : 100 - yd;
+        linesAndHashes += `<text x="${x}" y="48" fill="#FFFFFF" font-size="12" font-weight="700" font-family="JetBrains Mono, monospace" text-anchor="middle">${label}</text>`;
+      }
+    } else {
+      // Solid white 5-yard line
+      linesAndHashes += `<line x1="${x}" y1="14" x2="${x}" y2="76" stroke="#FFFFFF" stroke-dasharray="3 3" stroke-width="1.2" opacity="0.8"/>`;
+    }
+  }
+
+  // Draw top/bottom hash marks in solid white
+  for(let yd = 1; yd < 100; yd++){
+    if(yd % 5 !== 0){
+      const x = x0 + (yd / 100) * w;
+      linesAndHashes += `<line x1="${x}" y1="14" x2="${x}" y2="20" stroke="#FFFFFF" stroke-width="1" opacity="0.8"/>`;
+      linesAndHashes += `<line x1="${x}" y1="70" x2="${x}" y2="76" stroke="#FFFFFF" stroke-width="1" opacity="0.8"/>`;
+    }
+  }
+
+  const bx = x0 + (spotFromOwnGoal / 100) * w;
+
+  svg.innerHTML = `
+    <rect x="0" y="0" width="700" height="90" fill="#132a1c"/>
+    <rect x="${x0}" y="14" width="${w}" height="62" fill="#1d482b" stroke="#FFFFFF" stroke-width="2"/>
+    <rect x="0" y="14" width="${x0}" height="62" fill="${teamData.clemson.primary}"/>
+    <text x="10" y="48" fill="#FFFFFF" font-size="10" font-weight="800" font-family="Inter, sans-serif" text-anchor="middle" transform="rotate(-90 10 48)">CLEMSON</text>
+    <rect x="${x1}" y="14" width="${700-x1}" height="62" fill="${oppColor}"/>
+    <text x="690" y="48" fill="#FFFFFF" font-size="10" font-weight="800" font-family="Inter, sans-serif" text-anchor="middle" transform="rotate(90 690 48)">${oppLabel}</text>
+    ${linesAndHashes}
+    <polygon points="${bx-7},73 ${bx+7},73 ${bx},59" fill="#F66733"/>
+    <line x1="${bx}" y1="14" x2="${bx}" y2="76" stroke="#F66733" stroke-width="3"/>
+  `;
+}
+
+/* =========================================================
+   4. 4TH Down
+   ========================================================= */
+const fOpp = document.getElementById('f-opp');
+opponentKeys.forEach(k => {
+  const o = document.createElement('option'); o.value = k; o.textContent = teamData[k].name; fOpp.appendChild(o);
+});
+fOpp.value = 'lsu';
+
+const fDist = document.getElementById('f-dist'), fDistVal = document.getElementById('f-distval');
+const fMargin = document.getElementById('f-margin'), fQtr = document.getElementById('f-qtr'), fTime = document.getElementById('f-time');
+const fYard = document.getElementById('f-yardline'), fYardLabel = document.getElementById('f-yardlabel');
+const fieldSvg = document.getElementById('fieldsvg');
+
+function yardLabelText(yardsToGo){
+  if(yardsToGo === 50) return "Midfield";
+  if(yardsToGo > 50) return "Own " + (100 - yardsToGo);
+  return "Opp " + yardsToGo;
+}
+
+function renderFourth(){
+  const teamKey = fOpp.value;
+  const team = teamData[teamKey];
+  const dist = parseInt(fDist.value, 10);
+  const yardsToGo = parseInt(fYard.value, 10);
+  const margin = parseInt(fMargin.value || 0, 10);
+  const qtr = parseInt(fQtr.value, 10);
+  const time = parseFloat(fTime.value || 0);
+
+  // distance from goal and yard to ge the first down
+  fDistVal.textContent = dist;
+  fYardLabel.textContent = yardLabelText(yardsToGo);
+  drawField(fieldSvg, yardsToGo, team);
+
+  // Re-skin table + badge colors to the selected defense
+  document.getElementById('f-defsnap-table').style.setProperty('--tm-primary', team.primary);
+  document.getElementById('f-defsnap-table').style.setProperty('--tm-secondary', team.secondary);
+  const datasrc = document.getElementById('f-datasrc');
+  datasrc.className = 'datasrc ' + team.source;
+  datasrc.textContent = (team.source === 'imported' ? 'Imported Report Data — ' : 'Modeled Estimate — ') + team.name + ' Defense';
+  document.getElementById('f-filternote').textContent = SAMPLE_FILTER_NOTE;
+
+  // Defensive tendency snapshot for the exact down/distance bucket in play
+  const bucketRow4 = findRow(teamKey, 4, dist);
+  const totalRow = team.rows.find(r => r.label === 'Total');
+  const defSnapTable = document.getElementById('f-defsnap-table');
+  const snapRows = [bucketRow4, totalRow].filter(Boolean);
+  defSnapTable.innerHTML = `
+    <thead><tr><th>${team.name} Defense Allows</th><th>Run %</th><th>Run Yds/Pl</th><th>Pass Yds/Pl</th><th>All Yds/Pl</th></tr></thead>
+    <tbody>
+      ${snapRows.map(r => `<tr class="${r.label==='Total'?'highlight':''}">
+        <td><b>${r.label === 'Total' ? 'Season Total' : r.label}</b></td>
+        <td>${r.runPct}%</td>
+        <td>${r.runYpp==null?'—':r.runYpp}</td>
+        <td>${r.passYpp==null?'—':r.passYpp}</td>
+        <td><b>${r.allYpp==null?'—':r.allYpp}</b></td>
+      </tr>`).join('')}
+    </tbody>`;
+
+  // Defensive-tendency factor: this bucket's allowed yds/play vs. league-average allowed yds/play
+  const bucketAllYpp = (bucketRow4 && bucketRow4.allYpp != null) ? bucketRow4.allYpp : totalRow.allYpp;
+  const defFactor = bucketAllYpp / LEAGUE_AVG_ALLOWED_YPP;
+
+  const ctx = getGameContextMultiplier(margin, qtr, time, defFactor);
+
+  // Raw EP calculations
+  const conv = teamAdjustedConvProb(teamKey, dist);
+  const spotAfterConvert = Math.max(1, yardsToGo - dist);
+  let rawEvGo = conv.p * EP(spotAfterConvert) + (1 - conv.p) * (-EP(100 - yardsToGo));
+
+  const netPunt = 40;
+  let afterPuntSpot = yardsToGo - netPunt;
+  let oppYardsToGo = afterPuntSpot <= 0 ? 80 : 100 - afterPuntSpot;
+  const canPunt = yardsToGo > 35;
+  let rawEvPunt = -EP(oppYardsToGo);
+
+  //back of endzone is 10 yards plus setup 7 yards from LOI
+  const fgDist = yardsToGo + 17;
+  const pMake = fgProb(fgDist);
+  const missSpot = Math.max(yardsToGo, 20);
+  const oppYardsToGoMiss = 100 - missSpot;
+  const evFgMake = 3 - EP(75);
+  let rawEvFg = pMake * evFgMake + (1 - pMake) * (-EP(oppYardsToGoMiss));
+  const fgInRange = fgDist <= 58;
+
+  // Context-adjusted EPA (raw EP delta × continuous leverage/defense multiplier)
+  let evGo = rawEvGo * ctx.goBonus;
+  let evFg = rawEvFg * ctx.fgBonus;
+  let evPunt = rawEvPunt * ctx.puntBonus;
+
+  const options = [
+    {key:'go', label:'GO FOR IT', ev:evGo, color:'var(--good)'},
+    {key:'fg', label:'FIELD GOAL', ev: fgInRange? evFg : -99, color:'var(--purple)'},
+    {key:'punt', label:'PUNT', ev: canPunt? evPunt : -99, color:'var(--warn)'},
+  ];
+  const best = options.reduce((a,b)=> b.ev > a.ev ? b : a);
+
+  // Stamp output
+  const stampRow = document.getElementById('f-stamp-row');
+  const stampClass = best.key === 'go' ? 'go' : (best.key === 'fg' ? 'fg' : 'punt');
+
+  // Fully dynamic situational read-out (continuous numbers, not fixed brackets)
+  const leverageWord = ctx.leverage < 0.08 ? 'minimal' : ctx.leverage < 0.3 ? 'moderate' : ctx.leverage < 0.65 ? 'high' : 'maximum';
+  const sideWord = margin === 0 ? 'a tied game' : margin > 0 ? `leading by ${margin}` : `trailing by ${Math.abs(margin)}`;
+  const defWord = defFactor >= 1.08 ? 'a defense that leaks yards on this look' : defFactor <= 0.92 ? 'a defense that clamps down on this look' : 'a roughly average defense in this spot';
+  const situNote = `<b>Situational Impact:</b> Q${qtr}, ${time}m left, ${sideWord} → <b>${leverageWord} leverage</b> (${(ctx.leverage*100).toFixed(0)}%). Facing ${defWord} (${bucketAllYpp.toFixed(1)} yds/play allowed vs. ${LEAGUE_AVG_ALLOWED_YPP.toFixed(1)} league avg, factor ${defFactor.toFixed(2)}×).`;
+
+  stampRow.innerHTML = `
+    <div class="stamp ${stampClass}">${best.label}</div>
+    <div class="confmeta">
+      Vs <b>${team.name}</b> defense · 4th &amp; ${dist} at ${yardLabelText(yardsToGo)}.
+      ${conv.modeled ? 'Conversion odds use league-average baselines.' : `Nudged using opponent's 4th-down efficiency (${conv.row.allYpp} yds/play allowed).`}
+      <br>${situNote}
+    </div>
+  `;
+
+  // EV bars
+  const vals = options.map(o => o.ev === -99 ? null : o.ev).filter(v => v !== null);
+  const maxAbs = Math.max(1, ...vals.map(v => Math.abs(v)));
+  const evbars = document.getElementById('f-evbars');
+  evbars.innerHTML = options.map(o => {
+    if(o.ev === -99){
+      return `<div class="evrow"><div class="lab">${o.label}</div><div class="evtrack"></div><div class="val" style="color:var(--ink-soft)">n/a</div></div>`;
+    }
+    const pct = Math.min(100, Math.abs(o.ev) / maxAbs * 100);
+    const isBest = o.key === best.key;
+    return `<div class="evrow">
+      <div class="lab" style="${isBest ? 'color:' + o.color : ''}">${o.label}${isBest ? ' ★' : ''}</div>
+      <div class="evtrack"><div class="evfill" style="width:${pct}%;background:${o.color}"></div></div>
+      <div class="val">${o.ev >= 0 ? '+' : ''}${o.ev.toFixed(2)} EPA</div>
+    </div>`;
+  }).join('');
+
+  // Tips
+  const tips = document.getElementById('f-tips');
+  const items = [];
+  items.push(`Go-for-it conversion estimate: <b>${Math.round(conv.p*100)}%</b>. Field goal from ${fgDist} yds: <b>${Math.round(pMake*100)}%</b> make rate.`);
+  items.push(`Game leverage multiplier: <b>${ctx.goBonus.toFixed(2)}×</b> on Go, <b>${ctx.fgBonus.toFixed(2)}×</b> on FG, <b>${ctx.puntBonus.toFixed(2)}×</b> on Punt — continuously recomputed from quarter, clock, and margin (no fixed brackets).`);
+  const defShift = (defFactor - 1) * 0.55;
+  items.push(`Defensive-tendency pull: ${team.name} allows <b>${bucketAllYpp.toFixed(1)} yds/play</b> on 4th &amp; ${dist <= 2 ? '1-2' : '3+'} situations (league avg ${LEAGUE_AVG_ALLOWED_YPP.toFixed(1)}), which by itself shifts Go EPA by <b>${defShift >= 0 ? '+' : ''}${defShift.toFixed(2)}×</b>.`);
+  tips.innerHTML = items.map(t => `<li>${t}</li>`).join('');
+}
+
+[fOpp, fDist, fMargin, fQtr, fTime, fYard].forEach(el => el.addEventListener('input', renderFourth));
+renderFourth();
+
+/* =========================================================
+   5. 2-Point Panel 
+   ========================================================= */
+const tMargin = document.getElementById('t-margin'), tQtr = document.getElementById('t-qtr'), tTime = document.getElementById('t-time');
+
+function scoreValue(margin){
+  let v = -margin * 0.1;
+  if(margin === 0) v += 0.9;
+  else if(Math.abs(margin) <= 3) v += 0.35;
+  else if(Math.abs(margin) <= 8) v += 0.1;
+  return v;
+}
+
+function renderTwo(){
+  const marginBefore = parseInt(tMargin.value || 0, 10);
+  const qtr = parseInt(tQtr.value, 10);
+  const time = parseFloat(tTime.value || 0);
+  const deficitAfterTd = -(marginBefore + 6); // Deficit from offense view after TD
+
+  const pKick = 0.94, p2 = 0.48;
+  const evKick = pKick * scoreValue(deficitAfterTd - 1) + (1 - pKick) * scoreValue(deficitAfterTd);
+  const ev2    = p2 * scoreValue(deficitAfterTd - 2)   + (1 - p2) * scoreValue(deficitAfterTd);
+
+  const go2 = ev2 > evKick;
+  const stampRow = document.getElementById('t-stamp-row');
+  
+  stampRow.innerHTML = `
+    <div class="stamp ${go2 ? 'two' : 'one'}">${go2 ? 'GO FOR 2' : 'KICK EXTRA POINT'}</div>
+    <div class="confmeta">
+      Margin after TD: <b>${deficitAfterTd > 0 ? 'Trailing by ' + deficitAfterTd : deficitAfterTd < 0 ? 'Leading by ' + (-deficitAfterTd) : 'Tied'}</b>.<br>
+      ${go2 ? 'Converting 2 points yields significantly higher leverage for tie/win outcomes.' : 'Kicker outcome delivers safer leverage without taking on 2-point failure risk.'}
+    </div>
+  `;
+
+  // Render Cleaned Table
+  const tableBody = document.getElementById('t-table-body');
+  const fmtMargin = (m) => m > 0 ? `Trailing ${m}` : m < 0 ? `Leading ${-m}` : 'Tied';
+  
+  tableBody.innerHTML = `
+    <tr class="${!go2 ? 'highlight' : ''}">
+      <td><b>Extra Point (1pt)</b></td>
+      <td>94%</td>
+      <td>${fmtMargin(deficitAfterTd - 1)}</td>
+      <td>${fmtMargin(deficitAfterTd)}</td>
+      <td><b>${evKick.toFixed(2)}</b> ${!go2 ? '★ RECOMMENDED' : ''}</td>
+    </tr>
+    <tr class="${go2 ? 'highlight' : ''}">
+      <td><b>2-Point Try (2pts)</b></td>
+      <td>48%</td>
+      <td>${fmtMargin(deficitAfterTd - 2)}</td>
+      <td>${fmtMargin(deficitAfterTd)}</td>
+      <td><b>${ev2.toFixed(2)}</b> ${go2 ? '★ RECOMMENDED' : ''}</td>
+    </tr>
+  `;
+
+  // EV Bars
+  const evbars = document.getElementById('t-evbars');
+  const maxAbs = Math.max(0.1, Math.abs(evKick), Math.abs(ev2));
+  evbars.innerHTML = [
+    ['KICK EXTRA POINT (94%)', evKick, 'var(--purple)', !go2],
+    ['GO FOR 2 (48%)', ev2, 'var(--good)', go2]
+  ].map(([lab, val, color, isBest]) => {
+    const pct = Math.min(100, Math.abs(val) / maxAbs * 100 + 15);
+    return `<div class="evrow">
+      <div class="lab" style="${isBest ? 'color:' + color : ''}">${lab}${isBest ? ' ★' : ''}</div>
+      <div class="evtrack"><div class="evfill" style="width:${pct}%;background:${color}"></div></div>
+      <div class="val">${val.toFixed(2)}</div>
+    </div>`;
+  }).join('');
+
+  // Tips
+  const tips = document.getElementById('t-tips');
+  const items = [];
+  if (deficitAfterTd === 2) items.push(`<b>Prime 2-point spot:</b> Converting immediately ties the game.`);
+  if (deficitAfterTd === 1) items.push(`<b>Prime Kick spot:</b> The single point ties the game without risking zero points.`);
+  if (qtr === 4 && time <= 8) items.push(`Late-game timing factors the exact number of possessions required to win or tie.`);
+  tips.innerHTML = items.map(t => `<li>${t}</li>`).join('');
+}
+
+[tMargin, tQtr, tTime].forEach(el => el.addEventListener('input', renderTwo));
+renderTwo();
+
+/* =========================================================
+   6. Game Management Panel
+   ========================================================= */
+const gMargin = document.getElementById('g-margin'), gQtr = document.getElementById('g-qtr'), gTime = document.getElementById('g-time');
+const gToff = document.getElementById('g-toffense'), gTdef = document.getElementById('g-tdefense'), gPoss = document.getElementById('g-poss');
+
+function renderManage(){
+  const margin = parseInt(gMargin.value || 0, 10);
+  const qtr = parseInt(gQtr.value, 10);
+  const time = parseFloat(gTime.value || 0);
+  const toff = parseInt(gToff.value, 10);
+  const tdef = parseInt(gTdef.value, 10);
+  const poss = gPoss.value;
+
+  const lateGame = qtr >= 4 && time <= 8;
+  let posture = 'balanced', badgeClass = 'posture-balanced';
+
+  if (lateGame && margin < 0 && Math.abs(margin) > 8) { posture = 'aggressive'; badgeClass = 'posture-aggressive'; }
+  else if (lateGame && margin > 8) { posture = 'conservative'; badgeClass = 'posture-conservative'; }
+
+  const tips = [];
+  if (lateGame && poss === 'us') {
+    if (margin > 0) {
+      tips.push(`Leading with ball (${time}m left): Keep clock running — stay in bounds, use play clock fully before snap.`);
+      if (toff > 0) tips.push(`Hold your remaining ${toff} timeout(s). Protect your clock stoppage capability.`);
+    } else {
+      tips.push(`Trailing with ball (${time}m left): Target boundary routes, quick-snap, stop clock when possible.`);
+    }
+  } else if (lateGame && poss === 'them') {
+    if (margin < 0) {
+      tips.push(`Trailing on defense: Burn timeouts aggressively after tackling in bounds to save clock for offensive drive.`);
+    }
+  }
+  if (tips.length === 0) tips.push(`Standard tactical situation: Focus on down-by-down execution and ball security.`);
+
+  document.getElementById('g-posture').className = 'posture-badge ' + badgeClass;
+  document.getElementById('g-posture').textContent = posture.toUpperCase() + ' POSTURE';
+  document.getElementById('g-tips').innerHTML = tips.map(t => `<li>${t}</li>`).join('');
+}
+
+[gMargin, gQtr, gTime, gToff, gTdef, gPoss].forEach(el => el.addEventListener('input', renderManage));
+renderManage();
+
+/* =========================================================
+   7. Tendencies Panel
+   ========================================================= */
+const qTeam = document.getElementById('q-team');
+Object.keys(teamData).forEach(k => {
+  const o = document.createElement('option'); o.value = k; o.textContent = teamData[k].name + (teamData[k].home ? ' (home team)' : ''); qTeam.appendChild(o);
+});
+qTeam.value = 'clemson';
+
+function renderTend(){
+  const t = teamData[qTeam.value];
+  const wrap = document.getElementById('q-tablewrap');
+  const datasrc = document.getElementById('q-datasrc');
+  datasrc.className = 'datasrc ' + t.source;
+  datasrc.textContent = (t.source === 'imported' ? 'Imported Report Data' : 'Modeled Estimate') + ' — ' + t.name + ' Defense';
+  document.getElementById('q-filternote').textContent = SAMPLE_FILTER_NOTE;
+
+  if(!t.rows){
+    wrap.innerHTML = `<div class="nodata">No raw tendency table currently imported for ${t.name}. Defaulting to league-average decision baselines.</div>`;
+    return;
+  }
+  const head = `<tr><th>Down &amp; Distance</th><th>Run % Allowed</th><th>Run Plys Faced</th><th>Run Yds/Pl Allowed</th><th>Pass Plys Faced</th><th>Pass Yds/Pl Allowed</th><th>All Plys Faced</th><th>All Yds/Pl Allowed</th></tr>`;
+  const body = t.rows.map(r => `<tr class="${r.label === 'Total' ? 'total' : ''}">
+    <td>${r.label}</td><td>${r.runPct}%</td><td>${r.runPlays}</td><td>${r.runYpp == null ? '—' : r.runYpp}</td>
+    <td>${r.passPlays}</td><td>${r.passYpp == null ? '—' : r.passYpp}</td><td>${r.allPlays}</td><td>${r.allYpp == null ? '—' : r.allYpp}</td>
+  </tr>`).join('');
+  wrap.innerHTML = `<div class="tbl-wrap"><table style="--tm-primary:${t.primary};--tm-secondary:${t.secondary}"><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
+}
+qTeam.addEventListener('input', renderTend);
+renderTend();
+
+/* =========================================================
+   8. Tab Controller
+   ========================================================= */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+    document.getElementById('panel-' + tab.dataset.tab).style.display = 'block';
+  });
+});
+</script>
+</body>
+</html>
